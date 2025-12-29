@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The Hand Engine — Transparent</title>
+<title>The Hand Engine — Demo Build</title>
 
 <style>
     html, body {
@@ -26,25 +26,26 @@
         background: transparent;
     }
 
-    /* The Hand Image */
+    /* Hand image */
     #hand {
-        width: 420px;
+        width: min(420px, 70vw);
         height: auto;
         pointer-events: auto;
         user-select: none;
         -webkit-user-drag: none;
 
-        /* Medium glow directly on the hand */
+        /* Medium glow */
         filter: drop-shadow(0 0 18px rgba(0, 150, 255, 0.35));
 
-        /* Floating animation */
+        /* Default floating animation */
         animation: float 4s ease-in-out infinite;
+        transition: transform 0.25s ease;
     }
 
     /* Faint grounding shadow */
     #shadow {
         position: absolute;
-        width: 260px;
+        width: min(260px, 40vw);
         height: 40px;
         background: radial-gradient(
             ellipse at center,
@@ -86,9 +87,11 @@
         100% { transform: scaleY(1); }
     }
 
-    /* Hidden talk mode — no visuals */
-    #talk-mode {
-        display: none;
+    /* Voice pulse (Talk Mode) */
+    @keyframes pulse {
+        0%   { transform: scale(1); filter: drop-shadow(0 0 18px rgba(0,150,255,0.35)); }
+        50%  { transform: scale(1.04); filter: drop-shadow(0 0 26px rgba(0,150,255,0.55)); }
+        100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(0,150,255,0.35)); }
     }
 </style>
 </head>
@@ -124,14 +127,36 @@
         lastTap = now;
     });
 
-    /* Press-and-hold Talk Mode (invisible) */
+    /* Hover tilt */
+    hand.addEventListener("mousemove", (e) => {
+        const rect = hand.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        hand.style.transform = `rotateX(${y / 25}deg) rotateY(${x / 25}deg)`;
+    });
+
+    hand.addEventListener("mouseleave", () => {
+        hand.style.transform = "rotateX(0deg) rotateY(0deg)";
+    });
+
+    /* Press-and-hold Talk Mode (silent) */
     let pressTimer;
     hand.addEventListener("mousedown", () => {
         pressTimer = setTimeout(() => {
-            console.log("Talk Mode Activated (silent)");
+            hand.style.animation = "pulse 1.4s ease-in-out infinite";
         }, 550);
     });
 
-    hand.addEventListener("mouseup", () => clearTimeout(pressTimer));
-    hand.addEventListener("mouseleave", () => clearTimeout(pressTimer));
+    hand.addEventListener("mouseup", () => {
+        clearTimeout(pressTimer);
+        hand.style.animation = "float 4s ease-in-out infinite";
+    });
+
+    hand.addEventListener("mouseleave", () => {
+        clearTimeout(pressTimer);
+        hand.style.animation = "float 4s ease-in-out infinite";
+    });
 </script>
+
+</body>
+</html>
