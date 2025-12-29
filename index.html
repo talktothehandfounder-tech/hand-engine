@@ -133,13 +133,16 @@
     });
 
     hand.addEventListener("mouseup", () => clearTimeout(pressTimer));
-   hand.addEventListener("mouseleave", () => clearTimeout(pressTimer)); 
+hand.addEventListener("mouseleave", () => { clearTimeout(pressTimer); hand.style.animation = "float 4s ease-in-out infinite"; 
+                                          }); 
 </script> 
     
     <!-- Load interaction engine --> 
-    <script src="hand.js?v=999"></script> 
+    <script src="hand.js?v=3"></script> 
+
 </body> 
 </html>
+
 
 
 
