@@ -1,1 +1,138 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>The Hand Engine — Demo Build</title> <style> html, body { margin: 0; padding: 0; background: black; overflow: hidden; height: 100%; width: 100%; } /* Container */ #hand-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: transparent; /* IMPORTANT: pointer-events must be AUTO */ pointer-events: auto; } /* Hand image */ #hand { width: min(420px, 70vw); height: auto; pointer-events: auto; user-select: none; -webkit-user-drag: none; /* Medium glow */ filter: drop-shadow(0 0 18px rgba(0, 150, 255, 0.35)); /* Default floating animation */ animation: float 4s ease-in-out infinite; transition: transform 0.25s ease; } /* Faint grounding shadow */ #shadow { position: absolute; width: min(260px, 40vw); height: 40px; background: radial-gradient( ellipse at center, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0) 100% ); bottom: 18%; filter: blur(12px); opacity: 0.55; animation: shadowFloat 4s ease-in-out infinite; pointer-events: none; } /* Floating motion */ @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-18px); } 100% { transform: translateY(0px); } } @keyframes shadowFloat { 0% { transform: scale(1); opacity: 0.55; } 50% { transform: scale(0.92); opacity: 0.40; } 100% { transform: scale(1); opacity: 0.55; } } /* Tap pop */ @keyframes tapPop { 0% { transform: scale(1); } 50% { transform: scale(0.94); } 100% { transform: scale(1); } } /* Wink animation */ @keyframes wink { 0% { transform: scaleY(1); } 40% { transform: scaleY(0.15); } 100% { transform: scaleY(1); } } /* Voice pulse (Talk Mode) */ @keyframes pulse { 0% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(0,150,255,0.35)); } 50% { transform: scale(1.04); filter: drop-shadow(0 0 26px rgba(0,150,255,0.55)); } 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(0,150,255,0.35)); } } </style> </head> <body> <div id="hand-container"> <img id="hand" src="hand.png" alt="The Hand" /> <div id="shadow"></div> </div> <script> const hand = document.getElementById("hand"); /* Tap interaction */ hand.addEventListener("click", () => { hand.style.animation = "tapPop 0.25s ease"; setTimeout(() => { hand.style.animation = "float 4s ease-in-out infinite"; }, 250); }); /* Double-tap wink */ let lastTap = 0; hand.addEventListener("click", () => { const now = Date.now(); if (now - lastTap < 300) { hand.style.animation = "wink 0.35s ease"; setTimeout(() => { hand.style.animation = "float 4s ease-in-out infinite"; }, 350); } lastTap = now; }); /* Hover tilt */ hand.addEventListener("mousemove", (e) => { const rect = hand.getBoundingClientRect(); const x = e.clientX - rect.left - rect.width / 2; const y = e.clientY - rect.top - rect.height / 2; hand.style.transform = `rotateX(${y / 25}deg) rotateY(${x / 25}deg)`; }); hand.addEventListener("mouseleave", () => { hand.style.transform = "rotateX(0deg) rotateY(0deg)"; }); /* Press-and-hold Talk Mode */ let pressTimer; hand.addEventListener("mousedown", () => { pressTimer = setTimeout(() => { hand.style.animation = "pulse 1.4s ease-in-out infinite"; }, 550); }); hand.addEventListener("mouseup", () => { clearTimeout(pressTimer); hand.style.animation = "float 4s ease-in-out infinite"; }); hand.addEventListener("mouseleave", () => { clearTimeout(pressTimer); hand.style.animation = "float 4s ease-in-out infinite"; }); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Hand Engine — Transparent</title>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+    }
+
+    /* Container */
+    #hand-container {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+        background: transparent;
+    }
+
+    /* The Hand Image */
+    #hand {
+        width: 420px;
+        height: auto;
+        pointer-events: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+
+        /* Medium glow directly on the hand */
+        filter: drop-shadow(0 0 18px rgba(0, 150, 255, 0.35));
+
+        /* Floating animation */
+        animation: float 4s ease-in-out infinite;
+    }
+
+    /* Faint grounding shadow */
+    #shadow {
+        position: absolute;
+        width: 260px;
+        height: 40px;
+        background: radial-gradient(
+            ellipse at center,
+            rgba(0,0,0,0.22) 0%,
+            rgba(0,0,0,0.05) 60%,
+            rgba(0,0,0,0) 100%
+        );
+        bottom: 18%;
+        filter: blur(12px);
+        opacity: 0.55;
+        animation: shadowFloat 4s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    /* Floating motion */
+    @keyframes float {
+        0%   { transform: translateY(0px); }
+        50%  { transform: translateY(-18px); }
+        100% { transform: translateY(0px); }
+    }
+
+    @keyframes shadowFloat {
+        0%   { transform: scale(1); opacity: 0.55; }
+        50%  { transform: scale(0.92); opacity: 0.40; }
+        100% { transform: scale(1); opacity: 0.55; }
+    }
+
+    /* Tap pop */
+    @keyframes tapPop {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(0.94); }
+        100% { transform: scale(1); }
+    }
+
+    /* Wink animation */
+    @keyframes wink {
+        0%   { transform: scaleY(1); }
+        40%  { transform: scaleY(0.15); }
+        100% { transform: scaleY(1); }
+    }
+
+    /* Hidden talk mode — no visuals */
+    #talk-mode {
+        display: none;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="hand-container">
+    <img id="hand" src="hand.png" alt="The Hand" />
+    <div id="shadow"></div>
+</div>
+
+<script>
+    const hand = document.getElementById("hand");
+
+    /* Tap interaction */
+    hand.addEventListener("click", () => {
+        hand.style.animation = "tapPop 0.25s ease";
+        setTimeout(() => {
+            hand.style.animation = "float 4s ease-in-out infinite";
+        }, 250);
+    });
+
+    /* Double-tap wink */
+    let lastTap = 0;
+    hand.addEventListener("click", () => {
+        const now = Date.now();
+        if (now - lastTap < 300) {
+            hand.style.animation = "wink 0.35s ease";
+            setTimeout(() => {
+                hand.style.animation = "float 4s ease-in-out infinite";
+            }, 350);
+        }
+        lastTap = now;
+    });
+
+    /* Press-and-hold Talk Mode (invisible) */
+    let pressTimer;
+    hand.addEventListener("mousedown", () => {
+        pressTimer = setTimeout(() => {
+            console.log("Talk Mode Activated (silent)");
+        }, 550);
+    });
+
+    hand.addEventListener("mouseup", () => clearTimeout(pressTimer));
+    hand.addEventListener("mouseleave", () => clearTimeout(pressTimer));
+
+</script>
