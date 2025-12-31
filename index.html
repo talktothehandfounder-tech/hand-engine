@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Hand Engine — Transparent</title>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+    }
+
+    /* Container */
+    #hand-container {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+        background: transparent;
+    }
+
+    /* The Hand Image */
+    #hand {
+        width: 420px;
+        height: auto;
+        pointer-events: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+
+        /* Medium glow directly on the hand */
+        filter: drop-shadow(0 0 18px rgba(0, 150, 255, 0.35));
+
+        /* Floating animation */
+        animation: float 4s ease-in-out infinite;
+    }
+
+    /* Faint grounding shadow */
+    #shadow {
+        position: absolute;
+        width: 260px;
+        height: 40px;
+        background: radial-gradient(
+            ellipse at center,
+            rgba(0,0,0,0.22) 0%,
+            rgba(0,0,0,0.05) 60%,
+            rgba(0,0,0,0) 100%
+        );
+        bottom: 18%;
+        filter: blur(12px);
+        opacity: 0.55;
+        animation: shadowFloat 4s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    /* Floating motion */
+    @keyframes float {
+        0%   { transform: translateY(0px); }
+        50%  { transform: translateY(-18px); }
+        100% { transform: translateY(0px); }
+    }
+
+    @keyframes shadowFloat {
+        0%   { transform: scale(1); opacity: 0.55; }
+        50%  { transform: scale(0.92); opacity: 0.40; }
+        100% { transform: scale(1); opacity: 0.55; }
+    }
+</style>
+</head>
+
+<body>
+
+<div id="hand-container">
+    <img id="hand" src="hand.png" alt="The Hand" />
+    <div id="shadow"></div>
+</div>
+
+<!-- Load interaction engine -->
+<script src="hand.js?v=999"></script>
+
+</body>
+</html>
